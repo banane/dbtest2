@@ -61,7 +61,9 @@ public class Word extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // TODO Auto-generated method stub
+        Log.d(Utils.TAG, getClass().getSimpleName() + " in cr delete uri:"+ uri);
+        databaseHelper.delete(uri, selection, selectionArgs);
+        getContext().getContentResolver().notifyChange(uri, null);
         return 0;
     }
 

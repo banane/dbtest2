@@ -2,13 +2,16 @@ package com.banane.dbtest2.activity;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -46,6 +49,15 @@ public class MainActivity  extends Activity implements LoaderCallbacks<Cursor> {
         mListView.setAdapter(cursorAdapter);
         getLoaderManager().initLoader(LOADER_ID, null, this).forceLoad();
 
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Uri deleteUri = ContentUris.withAppendedId(Word.CONTENT_URI, id);
+                Log.d(Utils.TAG,getClass().getSimpleName() + "onItemClick, uri:" + deleteUri);
+                getContentResolver().delete(deleteUri, null, null);
+            }
+        });
+
     }
 
     public void onClick(View v){
@@ -72,9 +84,7 @@ public class MainActivity  extends Activity implements LoaderCallbacks<Cursor> {
 
         cursorAdapter.swapCursor(c);
 
-        /**
-         * Registering content observer for this cursor, When this cursor value will be change
-         * This will notify our loader to reload its data*/
+
         DBContentObserver contentObserver = new DBContentObserver(new Handler(), loader);
         c.registerContentObserver(contentObserver);
         c.setNotificationUri(getContentResolver(), Word.CONTENT_URI);

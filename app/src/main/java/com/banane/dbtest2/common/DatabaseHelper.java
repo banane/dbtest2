@@ -112,6 +112,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return uri;
     }
 
+    public int delete(Uri uri, String arg1, String[] arg2) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String id = uri.getPathSegments().get(1);
+        Log.d(Utils.TAG, getClass().getSimpleName() + " in delete id:"+ id + ", uri:" + uri);
+
+        int count = db.delete(DATABASE_TABLE, KEY_ROW_ID + " = "  + id, arg2);
+        return count;
+    }
     /** Returns all the customers in the table */
     public Cursor getAllWords(){
         SQLiteDatabase db = this.getWritableDatabase();
