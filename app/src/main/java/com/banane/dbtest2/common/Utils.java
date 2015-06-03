@@ -1,4 +1,4 @@
-package com.banane.dbtest2;
+package com.banane.dbtest2.common;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.banane.dbtest2;
+package com.banane.dbtest2.model;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -6,6 +6,9 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
+import com.banane.dbtest2.common.DatabaseHelper;
+import com.banane.dbtest2.common.Utils;
 
 /**
  * Created by banane on 6/2/15.
@@ -26,12 +29,12 @@ public class Word extends ContentProvider {
     }
 
     /** This content provider does the database operations by this object */
-    WordDB mWordsDB;
+    DatabaseHelper databaseHelper;
 
     /** A callback method which is invoked when the content provider is starting up */
     @Override
     public boolean onCreate() {
-        mWordsDB = new WordDB(getContext());
+        databaseHelper = DatabaseHelper.getInstance(getContext());
         Log.d(Utils.TAG, getClass().getSimpleName() + " onCreate()");
         return true;
     }
@@ -46,8 +49,12 @@ public class Word extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
         if(uriMatcher.match(uri)==WORDS){
-            return mWordsDB.getAllWords();
+            Log.d(Utils.TAG, getClass().getSimpleName() + " query match uri:" + uri);
+
+            return databaseHelper.getAllWords();
+
         }else{
+            Log.d(Utils.TAG, getClass().getSimpleName() + " query no match uri:"+ uri);
             return null;
         }
     }
@@ -60,8 +67,14 @@ public class Word extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO Auto-generated method stub
-        return null;
+        if(uriMatcher.match(uri)==WORDS) {
+
+            databaseHelper.insert(values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            Log.d(Utils.TAG,getClass().getSimpleName() + " insert " + uri);
+
+        }
+        return uri;
     }
 
     @Override
@@ -70,5 +83,9 @@ public class Word extends ContentProvider {
         // TODO Auto-generated method stub
         return 0;
     }
+
+
+
+
 }
 
